@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7180071379636206475}
   - component: {fileID: 7180071379636206468}
   - component: {fileID: 7180071379636206469}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: TrashTemplate
   m_TagString: Collectable
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7180071379636206470}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.13, y: 0.64, z: 4.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []

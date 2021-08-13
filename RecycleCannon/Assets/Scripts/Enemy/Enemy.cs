@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     float timer = 0;
     Material myMaterial;
 
-    TrashType myType;
+    TrashType myType = TrashType.ORGANIC;
 
     int life = 3;
 
@@ -26,7 +26,8 @@ public class Enemy : MonoBehaviour
     private void OnEnable()
     {
         originalRotation = transform.rotation;
-        myType = (TrashType)Random.Range(0, GameManager.Instance.collectableInformations.Count);
+        if (!isBoss)
+            myType = (TrashType)Random.Range(0, GameManager.Instance.collectableInformations.Count);
         if (myMaterial == null) myMaterial = new Material(myRenderer.material);
         myMaterial.color = GameManager.Instance.collectableInformations.First(pre => pre.type == myType).typeColor;
         if(!myRenderer.material.Equals(myMaterial)) myRenderer.material = myMaterial;
@@ -98,36 +99,39 @@ public class Enemy : MonoBehaviour
 
     public void Die()
     {
-        GameManager.Instance.hordeManager.NewDeathRegister();
-        if (isBoss)
-        {
-            if (life <= 0)
-            {
-                GameManager.Instance.poolingSystem.DropTrashByType(myType, transform.position + ( Vector3.back * 2 ));
-                GameManager.Instance.poolingSystem.DropTrashByType(myType, transform.position + (Vector3.back));
-                GameManager.Instance.poolingSystem.DropTrashByType(myType, transform.position + (Vector3.forward * 2));
-                GameManager.Instance.kills++;
-            }
-            gameObject.SetActive(false);
-            return;
-        }
-
         if (life <= 0)
         {
             GameManager.Instance.kills++;
-            GameManager.Instance.poolingSystem.DropTrashByType(myType, transform.position);
+            GameManager.Instance.poolingSystem.DropTrashByType(!isBoss ? myType : (TrashType)Random.Range(0, GameManager.Instance.collectableInformations.Count), transform.position);
+            if (isBoss)
+            {
+                GameManager.Instance.poolingSystem.DropTrashByType((TrashType)Random.Range(0, GameManager.Instance.collectableInformations.Count), transform.position + (Vector3.back * 2));
+                GameManager.Instance.poolingSystem.DropTrashByType((TrashType)Random.Range(0, GameManager.Instance.collectableInformations.Count), transform.position + (Vector3.forward * 2));
+            }
         }
-        GameManager.Instance.poolingSystem.PutEnemyOnQueue(this.gameObject);
+        if (isBoss)
+        {
+            gameObject.SetActive(false);
+            GameManager.Instance.hordeManager.CheckToCallNewHorde();
+        }
+        else
+        {
+            GameManager.Instance.poolingSystem.PutEnemyOnQueue(this.gameObject);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Finish"))
+        {
+            GameManager.Instance.RemoveLife();
+            Die();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!isBoss && other.CompareTag("Player")) playerPersuit = true;
-        if (other.CompareTag("Finish"))
-        {
-            GameManager.Instance.RemoveLife();
-            Die();
-        }
     }
 
     private void OnTriggerExit(Collider other)

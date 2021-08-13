@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyRB: {fileID: 7826288873903496324}
-  enemyVelocity: 100
+  enemyVelocity: 25
   myRenderer: {fileID: 5597837541643458911}
   timeToApplyDmg: 2
   isBoss: 1

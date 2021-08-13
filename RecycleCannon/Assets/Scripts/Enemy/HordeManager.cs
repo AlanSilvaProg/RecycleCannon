@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 [System.Serializable]
 public class HordeConfigure
@@ -34,9 +35,9 @@ public class HordeManager : MonoBehaviour
     public HordeConfigure hordeConfigure;
     public GameObject bossTemplate;
     public Transform bossSpawn;
+    public TextMeshProUGUI hordeText;
 
     HordeValues currentHordeValues;
-    int deaths { get { return default; } set { CheckDeathRemaining(); } }
     int currentHorde = 0;
     int enemysSpawned = 0;
 
@@ -45,6 +46,8 @@ public class HordeManager : MonoBehaviour
     public void CallNewHordeBySystem()
     {
         currentHorde++;
+        enemysSpawned = 0;
+        hordeText.text = "Horde: " + currentHorde.ToString("00");
         currentHordeValues = hordeConfigure.GetHordeValues(currentHorde, 1);
         GameManager.Instance.RestartLife();
         StartCoroutine(HordeCaller());
@@ -67,14 +70,9 @@ public class HordeManager : MonoBehaviour
         }
     }
 
-    public void NewDeathRegister() { deaths--; }
-
-    public void CheckDeathRemaining()
+    public void CheckToCallNewHorde()
     {
-        if (deaths >= currentHordeValues.enemyQuantity)
-        {
-            if (currentHorde < hordeConfigure.hordeCalls) { if (!IsInvoking("CallNewHordeBySystem")) Invoke("CallNewHordeBySystem", 5); } else { GameManager.Instance.EndGame(true); }
-        }
+        if (currentHorde < hordeConfigure.hordeCalls) { if (!IsInvoking("CallNewHordeBySystem")) Invoke("CallNewHordeBySystem", 5); } else { GameManager.Instance.EndGame(true); }
     }
 
     #endregion
